@@ -1,0 +1,443 @@
+openapi: 3.0.0
+info:
+  title: Lead and Contractor Listing API
+  version: 1.0.0
+paths:
+  /leadCreateOrUpdate:
+    post:
+      summary: Create or update a lead
+      operationId: leadCreateOrUpdate
+      requestBody:
+        description: Payload for creating or updating a lead
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookCrmProjectRequest_Payload'
+      responses:
+        '200':
+          description: Lead created or updated successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /contractorListingCreateOrUpdate:
+    post:
+      summary: Create or update a contractor listing
+      operationId: contractorListingCreateOrUpdate
+      requestBody:
+        description: Payload for creating or updating a contractor listing
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookCrmContractorListing_Payload'
+      responses:
+        '200':
+          description: Contractor listing created or updated successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    WebhookCrmProjectRequest_Payload:
+      type: object
+      properties:
+        Timestamp:
+          type: integer
+          format: int64
+          description: The timestamp of the webhook event.
+          example: 1730003119
+        Action:
+          type: string
+          description: The action that triggered the webhook.
+          enum:
+            - Create
+            - Update
+          example: Created
+        Data:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Data'
+    WebhookCrmProjectRequest_Data:
+      type: object
+      properties:
+        LeadInfo:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_LeadInfo'
+        Documents:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Documents'
+        Commission:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Commission'
+        CustomerFeedback:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_CustomerFeedback'
+        Offer:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Offer'
+        RejectReason:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_RejectReason'
+    WebhookCrmProjectRequest_LeadInfo:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for the lead.
+          example: 2367
+        Status:
+          type: integer
+          format: uint32
+          description: Status code of the lead.
+          example: 1
+        StatusName:
+          type: string
+          description: Human-readable status name of the lead.
+          example: New Request
+        Created:
+          type: string
+          format: date-time
+          description: Creation timestamp of the lead.
+          example: '2024-10-27T04:25:19.94397184Z'
+        Source:
+          type: string
+          description: |
+            This endpoint allows users to submit leads through various sources, including website submissions, manual entries by contractors, and voucher-based leads. Each lead source is categorized for better tracking and analysis.
+          enum:
+            - Website
+            - Manual
+            - Voucher
+        FirstName:
+          type: string
+          description: First name of the lead.
+          example: John
+        LastName:
+          type: string
+          description: Last name of the lead.
+          example: Brown
+        Service:
+          type: string
+          description: Service requested by the lead.
+          example: Roofing
+        Address:
+          type: string
+          description: Address of the lead.
+          example: Test Address
+        City:
+          type: string
+          description: City of the lead.
+          example: New York
+        State:
+          type: string
+          description: State of the lead.
+          example: NY
+        ZipCode:
+          type: string
+          description: Zip code of the lead's address.
+          example: '10001'
+        Phone:
+          type: string
+          description: Phone number of the lead.
+          example: 12673800000
+        Email:
+          type: string
+          format: email
+          description: Email address of the lead.
+          example: test@directorii.com
+        Description:
+          type: string
+          description: Additional information about the lead.
+          example: ''
+    WebhookCrmProjectRequest_Documents:
+      type: object
+      properties:
+        Contract:
+          type: string
+          nullable: true
+          description: Link or identifier for the contract document.
+          example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
+        Receipt:
+          type: string
+          nullable: true
+          example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
+        Guarantee:
+          type: string
+          nullable: true
+          example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
+    WebhookCrmProjectRequest_Commission:
+      type: object
+      properties:
+        ProjectAmount:
+          type: number
+          format: float64
+          nullable: true
+          description: Total amount of the project.
+          example: 40
+        FeePercent:
+          type: number
+          format: float64
+          nullable: true
+          description: Percentage fee applied to the project amount.
+          example: 1
+        Fee:
+          type: number
+          format: float64
+          nullable: true
+          description: Total fee charged for the project.
+          example: 0.6
+        Payment:
+          type: string
+          nullable: true
+          description: Payment method used.
+          enum:
+            - Failed
+            - Succeeded
+            - Processing
+            - Canceled
+            - Unknown
+          example: Succeeded
+    WebhookCrmProjectRequest_CustomerFeedback:
+      type: object
+      properties:
+        Date:
+          type: string
+          format: date-time
+          description: Date when feedback was given.
+          example: '2024-10-27T04:25:19.94397184Z'
+        Rate:
+          type: integer
+          format: int32
+          description: Rating given by customer (1-5).
+          example: 5
+        Feedback:
+          type: string
+          description: Customer's feedback comments.
+          example: Test feedback
+    WebhookCrmProjectRequest_Offer:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for the offer.
+          example: 5
+        Name:
+          type: string
+          description: Name of the offer.
+          example: Roof Inspection
+        Price:
+          type: integer
+          format: uint32
+          description: Price of the offer.
+          example: 100
+    WebhookCrmProjectRequest_RejectReason:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for reject reason.
+          example: 1
+        Name:
+          type: string
+          description: Description of reject reason.
+          enum:
+            - Didn’t reach out
+            - Couldn’t reach contact
+            - Pricing
+            - Requested by mistake
+            - Outside service area
+            - Went with someone else
+            - Spam
+          example: Didn’t reach out
+    WebhookCrmContractorListing_Payload:
+      type: object
+      properties:
+        Timestamp:
+          type: integer
+          format: int64
+          description: The timestamp of the webhook event.
+          example: 1730003119
+        Action:
+          type: string
+          description: The action that triggered the webhook.
+          enum:
+            - Create
+            - Update
+          example: Created
+        Data:
+          $ref: '#/components/schemas/WebhookCrmContractorListing_Data'
+    WebhookCrmContractorListing_Data:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+        Status:
+          type: integer
+          format: uint32
+        StatusName:
+          type: string
+        Name:
+          type: string
+        Services:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookCrmContractorListing_Service'
+        Team:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookCrmContractorListing_TeamMember'
+        Users:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookCrmContractorListing_User'
+        Office:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookCrmContractorListing_Office'
+        Links:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookCrmContractorListing_Link'
+    WebhookCrmContractorListing_Service:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+        Name:
+          type: string
+    WebhookCrmContractorListing_TeamMember:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for the team member for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
+          example: 11
+        UniqueId:
+          type: string
+          description: Unique identifier for the team member through different revisions of a contractor listing. It has uuid format.
+          example: 08447bb3-6497-4e9e-a531-d6a0cea24d2f
+        FirstName:
+          type: string
+          description: First name of team member.
+          example: Vladimir
+        LastName:
+          type: string
+          description: Last name of team member.
+          example: Carevski
+        Email:
+          type: string
+          description: Email of team member.
+          example: testTeamMember@directorii.com
+        Phone:
+          type: string
+          description: Phone of team member.
+          example: '+12673800000'
+        Position:
+          type: string
+          description: Position of team member.
+          example: CEO
+        Owner:
+          type: integer
+          format: uint8
+          description: If this team member is owner, this field has value 1, othervize 0.
+          example: 1
+    WebhookCrmContractorListing_User:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for the team member for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
+          example: 100
+        FirstName:
+          type: string
+          description: First name of team member.
+          example: Sergey
+        LastName:
+          type: string
+          description: Last name of team member.
+          example: Dmitriev
+        Email:
+          type: string
+          description: Email of user.
+          example: testUser@directorii.com
+        Phone:
+          type: string
+          description: Phone of user.
+          example: '+12673800000'
+        Office:
+          $ref: '#/components/schemas/WebhookCrmContractorListing_Office'
+    WebhookCrmContractorListing_Office:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for the office for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
+          example: 35
+        UniqueId:
+          type: string
+          description: Unique identifier for the office through different revisions of a contractor listing. It has uuid format.
+          example: dfe1a9cb-ff7d-4bad-aa67-d300a741dcf2
+        GooglePlaceId:
+          type: string
+          description: Gooogle identifier of office place.
+          example: ChIJm4eQyMGseIgR-W0Nn6XssQU
+        Address:
+          type: string
+          description: Address of office.
+          example: 116 N Crescent Dr
+        City:
+          type: string
+          description: City of office.
+          example: Blytheville
+        State:
+          type: string
+          description: State of office.
+          example: Arkansas
+        Country:
+          type: string
+          description: Country of office.
+          example: United States
+        Zip:
+          type: string
+          description: Zip code of office.
+          example: '72315'
+        Phone:
+          type: string
+          description: Phone of office.
+          example: '+12673800000'
+        Emails:
+          type: array
+          description: Emails of office.
+          items:
+            type: string
+            example: officeEmail@directorii.com
+        Primary:
+          type: integer
+          format: uint8
+          description: If this office is primary, this field has value 1, othervize 0.
+          example: 1
+    WebhookCrmContractorListing_Link:
+      type: object
+      properties:
+        Id:
+          type: integer
+          format: uint32
+          description: Unique identifier for the link for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
+          example: 40
+        UniqueId:
+          type: string
+          description: Unique identifier for the link through different revisions of a contractor listing. It has uuid format.
+          example: dfe1a9cb-ff7d-4bad-aa67-d300a741dcf2
+        Type:
+          type: string
+          description: Type of link
+          enum:
+            - Website
+            - Facebook
+            - Google Page
+          example: Facebook
+        Url:
+          type: string
+          example: https://www.facebook.com/SGAConstruction
