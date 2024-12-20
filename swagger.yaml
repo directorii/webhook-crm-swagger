@@ -1,22 +1,23 @@
+
 openapi: 3.0.0
 info:
-  title: Lead and Contractor Listing API
+  title: Project and Contractor Listing API
   version: 1.0.0
 paths:
-  /leadCreateOrUpdate:
+  /projectCreateOrUpdate:
     post:
-      summary: Create or update a lead
-      operationId: leadCreateOrUpdate
+      summary: Create or update a project
+      operationId: projectCreateOrUpdate
       requestBody:
-        description: Payload for creating or updating a lead
+        description: Payload for creating or updating a project
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WebhookCrmProjectRequest_Payload'
+              $ref: '#/components/schemas/WebhookCrmProject_Payload'
       responses:
         '200':
-          description: Lead created or updated successfully
+          description: Project created or updated successfully
         '400':
           description: Bad request
         '500':
@@ -41,7 +42,7 @@ paths:
           description: Internal server error
 components:
   schemas:
-    WebhookCrmProjectRequest_Payload:
+    WebhookCrmProject_Payload:
       type: object
       properties:
         Timestamp:
@@ -57,95 +58,159 @@ components:
             - Update
           example: Created
         Data:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Data'
-    WebhookCrmProjectRequest_Data:
-      type: object
-      properties:
-        LeadInfo:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_LeadInfo'
-        Documents:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Documents'
-        Commission:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Commission'
-        CustomerFeedback:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_CustomerFeedback'
-        Offer:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Offer'
-        RejectReason:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_RejectReason'
-    WebhookCrmProjectRequest_LeadInfo:
+          $ref: '#/components/schemas/WebhookCrmProject_Data'
+    WebhookCrmProject_Data:
       type: object
       properties:
         Id:
           type: integer
           format: uint32
-          description: Unique identifier for the lead.
-          example: 2367
+          description: Project id.
+          example: 12345
         Status:
           type: integer
           format: uint32
-          description: Status code of the lead.
+          description: Status code of the project.
           example: 1
         StatusName:
           type: string
-          description: Human-readable status name of the lead.
-          example: New Request
-        Created:
-          type: string
-          format: date-time
-          description: Creation timestamp of the lead.
-          example: '2024-10-27T04:25:19.94397184Z'
+          description: Human-readable status name.
+          example: New
+          enum:
+            - New
+            - Verifying
+            - Full Coverage
+            - Declined
+            - Basic Coverage
+        LeadInfo:
+          $ref: '#/components/schemas/WebhookCrmProject_LeadInfo'
         Source:
           type: string
-          description: |
-            This endpoint allows users to submit leads through various sources, including website submissions, manual entries by contractors, and voucher-based leads. Each lead source is categorized for better tracking and analysis.
+          description: Source of the lead.
+          example: Website
           enum:
             - Website
             - Manual
             - Voucher
+        Offer:
+          $ref: '#/components/schemas/WebhookCrmProject_Offer'
+        Requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookCrmProject_Request'
+    WebhookCrmProject_LeadInfo:
+      type: object
+      properties:
         FirstName:
           type: string
-          description: First name of the lead.
-          example: John
+          example: 'John'
         LastName:
           type: string
-          description: Last name of the lead.
-          example: Brown
+          example: 'Doe'
         Service:
           type: string
-          description: Service requested by the lead.
-          example: Roofing
+          example: 'Roofing'
         Address:
           type: string
-          description: Address of the lead.
-          example: Test Address
+          example: '123 Main St.'
         City:
           type: string
-          description: City of the lead.
-          example: New York
-        State:
-          type: string
-          description: State of the lead.
-          example: NY
+          example: 'New York'
         ZipCode:
           type: string
-          description: Zip code of the lead's address.
           example: '10001'
         Phone:
           type: string
-          description: Phone number of the lead.
-          example: 12673800000
+          example: '+1234567890'
         Email:
           type: string
           format: email
-          description: Email address of the lead.
-          example: test@directorii.com
+          example: test@example.com
         Description:
           type: string
-          description: Additional information about the lead.
-          example: ''
-    WebhookCrmProjectRequest_Documents:
+    WebhookCrmProject_Offer:
       type: object
+      nullable: true
+      properties:
+        Id:
+          type: integer
+          format: uint32
+        Name:
+          type: string 
+        Price:
+          type: integer 
+    WebhookCrmProject_Request:
+      type: object 
+      properties:
+        Id:
+         type: integer 
+         format: uint32 
+         description: Unique identifier for the lead.
+         example: 1 
+        Status:
+          type: integer 
+          format: uint32 
+          description: Status code of the lead.
+          example: 1 
+        StatusName:
+          type: string 
+          description: Human-readable status name of the request.
+          example: In Progress 
+        Created:
+          type: string 
+          format: date-time 
+          description: Creation timestamp of the request.
+          example: '2024-10-27T04:25Z'
+          nullable: true
+        Contractor:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Contractor' 
+        Documents:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Documents' 
+        Commission :
+          $ref: '#/components/schemas/WebhookCrmProject_Commission' 
+        CustomerFeedback :
+          $ref: '#/components/schemas/WebhookCrmProject_CustomerFeedback' 
+        RejectReason :
+          $ref: '#/components/schemas/WebhookCrmProject_RejectReason' 
+    WebhookCrmProjectRequest_Contractor:
+      nullable: true
+      type: object 
+      properties:
+        Id:
+          type: integer 
+          format: uint32  
+        Name:
+          type: string  
+        Office:
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Office' 
+    WebhookCrmProjectRequest_Office:
+      type: object
+      nullable: true
+      properties:
+        Id:
+          type: integer  
+          format: uint32  
+        Address:
+          type: string  
+        City:
+          type: string  
+        State:
+          type: string  
+        Country:
+          type: string  
+        ZipCode:
+          type: string  
+        Phone:
+          type: string  
+        Emails:
+          type: array  
+          items:
+            type: string  
+        Primary:
+          type: integer  
+          format: uint8  
+    WebhookCrmProjectRequest_Documents:
+      type: object  
       properties:
         Contract:
           type: string
@@ -160,92 +225,77 @@ components:
           type: string
           nullable: true
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
-    WebhookCrmProjectRequest_Commission:
-      type: object
+    WebhookCrmProject_Commission:
+      type: object   
       properties:
         ProjectAmount:
-          type: number
-          format: float64
-          nullable: true
-          description: Total amount of the project.
-          example: 40
+          type: number   
+          format: float64   
+          nullable: true   
+          description: Total amount of the project.   
+          example: 40.5   
         FeePercent:
-          type: number
-          format: float64
-          nullable: true
-          description: Percentage fee applied to the project amount.
-          example: 1
+          type: number   
+          format: float64   
+          nullable: true   
+          description: Percentage fee applied to the project amount.   
+          example: 5.0   
         Fee:
-          type: number
-          format: float64
-          nullable: true
-          description: Total fee charged for the project.
-          example: 0.6
+          type: number   
+          format: float64   
+          nullable: true   
+          description: Total fee charged for the project.   
+          example: 2.5    
         Payment:
-          type: string
-          nullable: true
-          description: Payment method used.
-          enum:
-            - Failed
-            - Succeeded
-            - Processing
-            - Canceled
-            - Unknown
-          example: Succeeded
-    WebhookCrmProjectRequest_CustomerFeedback:
+          type: string    
+          nullable: true    
+          description: Payment method used.    
+          enum:    
+            - Failed    
+            - Succeeded    
+            - Processing    
+            - Canceled    
+            - Unknown    
+          example: Succeeded    
+    WebhookCrmProject_CustomerFeedback:
       type: object
+      nullable: true
       properties:
         Date:
-          type: string
-          format: date-time
-          description: Date when feedback was given.
-          example: '2024-10-27T04:25:19.94397184Z'
+          type: string     
+          format: date-time     
+          description: Date when feedback was given.     
+          example: '2024-10-27T04;25Z'     
         Rate:
-          type: integer
-          format: int32
-          description: Rating given by customer (1-5).
-          example: 5
+          type: integer     
+          format: int32     
+          description: Rating given by customer (1-5).     
+          example: 5     
         Feedback:
-          type: string
-          description: Customer's feedback comments.
-          example: Test feedback
-    WebhookCrmProjectRequest_Offer:
+          type: string     
+          description: Customer's feedback comments.     
+          example: Test feedback     
+    WebhookCrmProject_RejectReason:
       type: object
+      nullable: true
       properties:
         Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for the offer.
-          example: 5
+          type: integer     
+          format: uint32     
+          description: Unique identifier for reject reason.     
+          example: 1     
         Name:
-          type: string
-          description: Name of the offer.
-          example: Roof Inspection
-        Price:
-          type: integer
-          format: uint32
-          description: Price of the offer.
-          example: 100
-    WebhookCrmProjectRequest_RejectReason:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for reject reason.
-          example: 1
-        Name:
-          type: string
-          description: Description of reject reason.
+          type: string     
+          description: Description of reject reason.     
           enum:
-            - Didn’t reach out
-            - Couldn’t reach contact
-            - Pricing
-            - Requested by mistake
-            - Outside service area
-            - Went with someone else
-            - Spam
-          example: Didn’t reach out
+            - Didn’t reach out    
+            - Couldn’t reach contact    
+            - Pricing    
+            - Requested by mistake    
+            - Outside service area    
+            - Went with someone else    
+            - Spam    
+          example: Didn’t reach out  
     WebhookCrmContractorListing_Payload:
       type: object
       properties:
