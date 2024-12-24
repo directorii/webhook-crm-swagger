@@ -214,21 +214,23 @@ components:
         Contract:
           type: string
           nullable: true
-          description: Link or identifier for the contract document.
+          description: Link or identifier for the contract document. Available for download only to logged in users.
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
         ContractDate:
           type: string 
           format: date-time 
-          description: Date of contract document .
+          description: Date of contract document.
           example: '2024-12-23T20:59:44.322Z'
           nullable: true
         Receipt:
           type: string
           nullable: true
+          description: Available for download only to logged in users.
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
         Guarantee:
           type: string
           nullable: true
+          description: Available for download only to logged in users.
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
     WebhookCrmProject_Commission:
       type: object   
