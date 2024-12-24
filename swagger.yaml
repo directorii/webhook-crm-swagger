@@ -159,7 +159,7 @@ components:
           type: string 
           format: date-time 
           description: Creation timestamp of the request.
-          example: '2024-10-27T04:25Z'
+          example: '2024-12-23T20:59:44.322Z'
           nullable: true
         Contractor:
           $ref: '#/components/schemas/WebhookCrmProjectRequest_Contractor' 
@@ -216,6 +216,12 @@ components:
           nullable: true
           description: Link or identifier for the contract document.
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
+        ContractDate:
+          type: string 
+          format: date-time 
+          description: Date of contract document .
+          example: '2024-12-23T20:59:44.322Z'
+          nullable: true
         Receipt:
           type: string
           nullable: true
@@ -264,7 +270,7 @@ components:
           type: string     
           format: date-time     
           description: Date when feedback was given.     
-          example: '2024-10-27T04;25Z'     
+          example: '2024-12-23T20:59:44.322Z'     
         Rate:
           type: integer     
           format: int32     
