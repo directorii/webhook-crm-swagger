@@ -53,8 +53,8 @@ components:
           type: string
           description: The action that triggered the webhook.
           enum:
-            - Create
-            - Update
+            - Created
+            - Updated
           example: Created
         Data:
           $ref: '#/components/schemas/WebhookCrmProject_Data'
@@ -315,8 +315,8 @@ components:
           type: string
           description: The action that triggered the webhook.
           enum:
-            - Create
-            - Update
+            - Created
+            - Updated
           example: Created
         Data:
           $ref: '#/components/schemas/WebhookCrmContractorListing_Data'
