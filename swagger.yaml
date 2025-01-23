@@ -102,19 +102,23 @@ components:
       properties:
         FirstName:
           type: string
-          example: 'John'
+          example: John
         LastName:
           type: string
-          example: 'Doe'
+          example: Doe
         Service:
           type: string
-          example: 'Roofing'
+          example: Roofing
         Address:
           type: string
-          example: '123 Main St.'
+          example: 123 Main St.
         City:
           type: string
-          example: 'New York'
+          example: New York
+        State:
+          type: string
+          example: MN
+          description: Code of state
         ZipCode:
           type: string
           example: '10001'
@@ -135,81 +139,85 @@ components:
           type: integer
           format: uint32
         Name:
-          type: string 
+          type: string
         Price:
-          type: integer 
+          type: integer
     WebhookCrmProject_Request:
-      type: object 
+      type: object
       properties:
         Id:
-         type: integer 
-         format: uint32 
-         description: Unique identifier for the lead.
-         example: 1 
+          type: integer
+          format: uint32
+          description: Unique identifier for the lead.
+          example: 1
         Status:
-          type: integer 
-          format: uint32 
+          type: integer
+          format: uint32
           description: Status code of the lead.
-          example: 1 
+          example: 1
         StatusName:
-          type: string 
+          type: string
           description: Human-readable status name of the request.
-          example: In Progress 
+          example: In Progress
+        IsAssigned:
+          type: boolean
+          description: Assigned project request. If it is true, all another are rejected
+          example: false
         Created:
-          type: string 
-          format: date-time 
+          type: string
+          format: date-time
           description: Creation timestamp of the request.
           example: '2024-12-23T20:59:44.322Z'
           nullable: true
         Contractor:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Contractor' 
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Contractor'
         Documents:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Documents' 
-        Commission :
-          $ref: '#/components/schemas/WebhookCrmProject_Commission' 
-        CustomerFeedback :
-          $ref: '#/components/schemas/WebhookCrmProject_CustomerFeedback' 
-        RejectReason :
-          $ref: '#/components/schemas/WebhookCrmProject_RejectReason' 
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Documents'
+        Commission:
+          $ref: '#/components/schemas/WebhookCrmProject_Commission'
+        CustomerFeedback:
+          $ref: '#/components/schemas/WebhookCrmProject_CustomerFeedback'
+        RejectReason:
+          $ref: '#/components/schemas/WebhookCrmProject_RejectReason'
     WebhookCrmProjectRequest_Contractor:
       nullable: true
-      type: object 
+      type: object
       properties:
         Id:
-          type: integer 
-          format: uint32  
+          type: integer
+          format: uint32
         Name:
-          type: string  
+          type: string
         Office:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Office' 
+          $ref: '#/components/schemas/WebhookCrmProjectRequest_Office'
     WebhookCrmProjectRequest_Office:
       type: object
       nullable: true
       properties:
         Id:
-          type: integer  
-          format: uint32  
+          type: integer
+          format: uint32
         Address:
-          type: string  
+          type: string
         City:
-          type: string  
+          type: string
         State:
-          type: string  
+          type: string
         Country:
-          type: string  
+          type: string
         ZipCode:
-          type: string  
+          type: string
         Phone:
-          type: string  
+          type: string
         Emails:
-          type: array  
+          type: array
           items:
-            type: string  
+            type: string
         Primary:
-          type: integer  
-          format: uint8  
+          type: integer
+          format: uint8
     WebhookCrmProjectRequest_Documents:
-      type: object  
+      type: object
       properties:
         Contract:
           type: string
@@ -217,8 +225,8 @@ components:
           description: Link or identifier for the contract document. Available for download only to logged in users.
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
         ContractDate:
-          type: string 
-          format: date-time 
+          type: string
+          format: date-time
           description: Date of contract document.
           example: '2024-12-23T20:59:44.322Z'
           nullable: true
@@ -233,76 +241,76 @@ components:
           description: Available for download only to logged in users.
           example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
     WebhookCrmProject_Commission:
-      type: object   
+      type: object
       properties:
         ProjectAmount:
-          type: number   
-          format: float64   
-          nullable: true   
-          description: Total amount of the project.   
-          example: 40.5   
+          type: number
+          format: float64
+          nullable: true
+          description: Total amount of the project.
+          example: 40.5
         FeePercent:
-          type: number   
-          format: float64   
-          nullable: true   
-          description: Percentage fee applied to the project amount.   
-          example: 5.0   
+          type: number
+          format: float64
+          nullable: true
+          description: Percentage fee applied to the project amount.
+          example: 5
         Fee:
-          type: number   
-          format: float64   
-          nullable: true   
-          description: Total fee charged for the project.   
-          example: 2.5    
+          type: number
+          format: float64
+          nullable: true
+          description: Total fee charged for the project.
+          example: 2.5
         Payment:
-          type: string    
-          nullable: true    
-          description: Payment method used.    
-          enum:    
-            - Failed    
-            - Succeeded    
-            - Processing    
-            - Canceled    
-            - Unknown    
-          example: Succeeded    
+          type: string
+          nullable: true
+          description: Payment method used.
+          enum:
+            - Failed
+            - Succeeded
+            - Processing
+            - Canceled
+            - Unknown
+          example: Succeeded
     WebhookCrmProject_CustomerFeedback:
       type: object
       nullable: true
       properties:
         Date:
-          type: string     
-          format: date-time     
-          description: Date when feedback was given.     
-          example: '2024-12-23T20:59:44.322Z'     
+          type: string
+          format: date-time
+          description: Date when feedback was given.
+          example: '2024-12-23T20:59:44.322Z'
         Rate:
-          type: integer     
-          format: int32     
-          description: Rating given by customer (1-5).     
-          example: 5     
+          type: integer
+          format: int32
+          description: Rating given by customer (1-5).
+          example: 5
         Feedback:
-          type: string     
-          description: Customer's feedback comments.     
-          example: Test feedback     
+          type: string
+          description: Customer's feedback comments.
+          example: Test feedback
     WebhookCrmProject_RejectReason:
       type: object
       nullable: true
       properties:
         Id:
-          type: integer     
-          format: uint32     
-          description: Unique identifier for reject reason.     
-          example: 1     
+          type: integer
+          format: uint32
+          description: Unique identifier for reject reason.
+          example: 1
         Name:
-          type: string     
-          description: Description of reject reason.     
+          type: string
+          description: Description of reject reason.
           enum:
-            - Didn’t reach out    
-            - Couldn’t reach contact    
-            - Pricing    
-            - Requested by mistake    
-            - Outside service area    
-            - Went with someone else    
-            - Spam    
-          example: Didn’t reach out  
+            - Didn’t reach out
+            - Couldn’t reach contact
+            - Pricing
+            - Requested by mistake
+            - Outside service area
+            - Went with someone else
+            - Spam
+          example: Didn’t reach out
     WebhookCrmContractorListing_Payload:
       type: object
       properties:
