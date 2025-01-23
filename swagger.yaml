@@ -1,508 +1,686 @@
-openapi: 3.0.0
-info:
-  title: Project and Contractor Listing API
-  version: 1.0.0
-paths:
-  /projectCreateOrUpdate:
-    post:
-      summary: Create or update a project
-      operationId: projectCreateOrUpdate
-      requestBody:
-        description: Payload for creating or updating a project
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebhookCrmProject_Payload'
-      responses:
-        '200':
-          description: Project created or updated successfully
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-  /contractorListingCreateOrUpdate:
-    post:
-      summary: Create or update a contractor listing
-      operationId: contractorListingCreateOrUpdate
-      requestBody:
-        description: Payload for creating or updating a contractor listing
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebhookCrmContractorListing_Payload'
-      responses:
-        '200':
-          description: Contractor listing created or updated successfully
-        '400':
-          description: Bad request
-        '500':
-          description: Internal server error
-components:
-  schemas:
-    WebhookCrmProject_Payload:
-      type: object
-      properties:
-        Timestamp:
-          type: integer
-          format: int64
-          description: The timestamp of the webhook event.
-          example: 1730003119
-        Action:
-          type: string
-          description: The action that triggered the webhook.
-          enum:
-            - Created
-            - Updated
-          example: Created
-        Data:
-          $ref: '#/components/schemas/WebhookCrmProject_Data'
-    WebhookCrmProject_Data:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Project id.
-          example: 12345
-        Status:
-          type: integer
-          format: uint32
-          description: Status code of the project.
-          example: 1
-        StatusName:
-          type: string
-          description: Human-readable status name.
-          example: New
-          enum:
-            - New
-            - Verifying
-            - Full Coverage
-            - Declined
-            - Basic Coverage
-        LeadInfo:
-          $ref: '#/components/schemas/WebhookCrmProject_LeadInfo'
-        Source:
-          type: string
-          description: Source of the lead.
-          example: Website
-          enum:
-            - Website
-            - Manual
-            - Voucher
-        Offer:
-          $ref: '#/components/schemas/WebhookCrmProject_Offer'
-        Requests:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookCrmProject_Request'
-    WebhookCrmProject_LeadInfo:
-      type: object
-      properties:
-        FirstName:
-          type: string
-          example: John
-        LastName:
-          type: string
-          example: Doe
-        Service:
-          type: string
-          example: Roofing
-        Address:
-          type: string
-          example: 123 Main St.
-        City:
-          type: string
-          example: New York
-        State:
-          type: string
-          example: MN
-          description: Code of state
-        ZipCode:
-          type: string
-          example: '10001'
-        Phone:
-          type: string
-          example: '+1234567890'
-        Email:
-          type: string
-          format: email
-          example: test@example.com
-        Description:
-          type: string
-    WebhookCrmProject_Offer:
-      type: object
-      nullable: true
-      properties:
-        Id:
-          type: integer
-          format: uint32
-        Name:
-          type: string
-        Price:
-          type: integer
-    WebhookCrmProject_Request:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for the lead.
-          example: 1
-        Status:
-          type: integer
-          format: uint32
-          description: Status code of the lead.
-          example: 1
-        StatusName:
-          type: string
-          description: Human-readable status name of the request.
-          example: In Progress
-        IsAssigned:
-          type: boolean
-          description: Assigned project request. If it is true, all another are rejected
-          example: false
-        Created:
-          type: string
-          format: date-time
-          description: Creation timestamp of the request.
-          example: '2024-12-23T20:59:44.322Z'
-          nullable: true
-        Contractor:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Contractor'
-        Documents:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Documents'
-        Commission:
-          $ref: '#/components/schemas/WebhookCrmProject_Commission'
-        CustomerFeedback:
-          $ref: '#/components/schemas/WebhookCrmProject_CustomerFeedback'
-        RejectReason:
-          $ref: '#/components/schemas/WebhookCrmProject_RejectReason'
-    WebhookCrmProjectRequest_Contractor:
-      nullable: true
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-        Name:
-          type: string
-        Office:
-          $ref: '#/components/schemas/WebhookCrmProjectRequest_Office'
-    WebhookCrmProjectRequest_Office:
-      type: object
-      nullable: true
-      properties:
-        Id:
-          type: integer
-          format: uint32
-        Address:
-          type: string
-        City:
-          type: string
-        State:
-          type: string
-        Country:
-          type: string
-        ZipCode:
-          type: string
-        Phone:
-          type: string
-        Emails:
-          type: array
-          items:
-            type: string
-        Primary:
-          type: integer
-          format: uint8
-    WebhookCrmProjectRequest_Documents:
-      type: object
-      properties:
-        Contract:
-          type: string
-          nullable: true
-          description: Link or identifier for the contract document. Available for download only to logged in users.
-          example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
-        ContractDate:
-          type: string
-          format: date-time
-          description: Date of contract document.
-          example: '2024-12-23T20:59:44.322Z'
-          nullable: true
-        Receipt:
-          type: string
-          nullable: true
-          description: Available for download only to logged in users.
-          example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
-        Guarantee:
-          type: string
-          nullable: true
-          description: Available for download only to logged in users.
-          example: https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813
-    WebhookCrmProject_Commission:
-      type: object
-      properties:
-        ProjectAmount:
-          type: number
-          format: float64
-          nullable: true
-          description: Total amount of the project.
-          example: 40.5
-        FeePercent:
-          type: number
-          format: float64
-          nullable: true
-          description: Percentage fee applied to the project amount.
-          example: 5
-        Fee:
-          type: number
-          format: float64
-          nullable: true
-          description: Total fee charged for the project.
-          example: 2.5
-        Payment:
-          type: string
-          nullable: true
-          description: Payment method used.
-          enum:
-            - Failed
-            - Succeeded
-            - Processing
-            - Canceled
-            - Unknown
-          example: Succeeded
-    WebhookCrmProject_CustomerFeedback:
-      type: object
-      nullable: true
-      properties:
-        Date:
-          type: string
-          format: date-time
-          description: Date when feedback was given.
-          example: '2024-12-23T20:59:44.322Z'
-        Rate:
-          type: integer
-          format: int32
-          description: Rating given by customer (1-5).
-          example: 5
-        Feedback:
-          type: string
-          description: Customer's feedback comments.
-          example: Test feedback
-    WebhookCrmProject_RejectReason:
-      type: object
-      nullable: true
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for reject reason.
-          example: 1
-        Name:
-          type: string
-          description: Description of reject reason.
-          enum:
-            - Didn’t reach out
-            - Couldn’t reach contact
-            - Pricing
-            - Requested by mistake
-            - Outside service area
-            - Went with someone else
-            - Spam
-          example: Didn’t reach out
-    WebhookCrmContractorListing_Payload:
-      type: object
-      properties:
-        Timestamp:
-          type: integer
-          format: int64
-          description: The timestamp of the webhook event.
-          example: 1730003119
-        Action:
-          type: string
-          description: The action that triggered the webhook.
-          enum:
-            - Created
-            - Updated
-          example: Created
-        Data:
-          $ref: '#/components/schemas/WebhookCrmContractorListing_Data'
-    WebhookCrmContractorListing_Data:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-        Status:
-          type: integer
-          format: uint32
-        StatusName:
-          type: string
-        Name:
-          type: string
-        Services:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookCrmContractorListing_Service'
-        Team:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookCrmContractorListing_TeamMember'
-        Users:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookCrmContractorListing_User'
-        Office:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookCrmContractorListing_Office'
-        Links:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookCrmContractorListing_Link'
-    WebhookCrmContractorListing_Service:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-        Name:
-          type: string
-    WebhookCrmContractorListing_TeamMember:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for the team member for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
-          example: 11
-        UniqueId:
-          type: string
-          description: Unique identifier for the team member through different revisions of a contractor listing. It has uuid format.
-          example: 08447bb3-6497-4e9e-a531-d6a0cea24d2f
-        FirstName:
-          type: string
-          description: First name of team member.
-          example: Vladimir
-        LastName:
-          type: string
-          description: Last name of team member.
-          example: Carevski
-        Email:
-          type: string
-          description: Email of team member.
-          example: testTeamMember@directorii.com
-        Phone:
-          type: string
-          description: Phone of team member.
-          example: '+12673800000'
-        Position:
-          type: string
-          description: Position of team member.
-          example: CEO
-        Owner:
-          type: integer
-          format: uint8
-          description: If this team member is owner, this field has value 1, othervize 0.
-          example: 1
-    WebhookCrmContractorListing_User:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for the team member for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
-          example: 100
-        FirstName:
-          type: string
-          description: First name of team member.
-          example: Sergey
-        LastName:
-          type: string
-          description: Last name of team member.
-          example: Dmitriev
-        Email:
-          type: string
-          description: Email of user.
-          example: testUser@directorii.com
-        Phone:
-          type: string
-          description: Phone of user.
-          example: '+12673800000'
-        Office:
-          $ref: '#/components/schemas/WebhookCrmContractorListing_Office'
-    WebhookCrmContractorListing_Office:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for the office for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
-          example: 35
-        UniqueId:
-          type: string
-          description: Unique identifier for the office through different revisions of a contractor listing. It has uuid format.
-          example: dfe1a9cb-ff7d-4bad-aa67-d300a741dcf2
-        GooglePlaceId:
-          type: string
-          description: Gooogle identifier of office place.
-          example: ChIJm4eQyMGseIgR-W0Nn6XssQU
-        Address:
-          type: string
-          description: Address of office.
-          example: 116 N Crescent Dr
-        City:
-          type: string
-          description: City of office.
-          example: Blytheville
-        State:
-          type: string
-          description: State of office.
-          example: Arkansas
-        Country:
-          type: string
-          description: Country of office.
-          example: United States
-        Zip:
-          type: string
-          description: Zip code of office.
-          example: '72315'
-        Phone:
-          type: string
-          description: Phone of office.
-          example: '+12673800000'
-        Emails:
-          type: array
-          description: Emails of office.
-          items:
-            type: string
-            example: officeEmail@directorii.com
-        Primary:
-          type: integer
-          format: uint8
-          description: If this office is primary, this field has value 1, othervize 0.
-          example: 1
-    WebhookCrmContractorListing_Link:
-      type: object
-      properties:
-        Id:
-          type: integer
-          format: uint32
-          description: Unique identifier for the link for a revision of a contractor listing. The field is not suitable for identifying changes to an object.
-          example: 40
-        UniqueId:
-          type: string
-          description: Unique identifier for the link through different revisions of a contractor listing. It has uuid format.
-          example: dfe1a9cb-ff7d-4bad-aa67-d300a741dcf2
-        Type:
-          type: string
-          description: Type of link
-          enum:
-            - Website
-            - Facebook
-            - Google Page
-          example: Facebook
-        Url:
-          type: string
-          example: https://www.facebook.com/SGAConstruction
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Project and Contractor Listing API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/projectCreateOrUpdate": {
+      "post": {
+        "summary": "Create or update a project",
+        "operationId": "projectCreateOrUpdate",
+        "requestBody": {
+          "description": "Payload for creating or updating a project",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookCrmProject_Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Project created or updated successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/contractorListingCreateOrUpdate": {
+      "post": {
+        "summary": "Create or update a contractor listing",
+        "operationId": "contractorListingCreateOrUpdate",
+        "requestBody": {
+          "description": "Payload for creating or updating a contractor listing",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookCrmContractorListing_Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contractor listing created or updated successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "WebhookCrmProject_Payload": {
+        "type": "object",
+        "properties": {
+          "Timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The timestamp of the webhook event.",
+            "example": 1730003119
+          },
+          "Action": {
+            "type": "string",
+            "description": "The action that triggered the webhook.",
+            "enum": [
+              "Created",
+              "Updated"
+            ],
+            "example": "Created"
+          },
+          "Data": {
+            "$ref": "#/components/schemas/WebhookCrmProject_Data"
+          }
+        }
+      },
+      "WebhookCrmProject_Data": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Project id.",
+            "example": 12345
+          },
+          "Status": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Status code of the project.",
+            "example": 1
+          },
+          "StatusName": {
+            "type": "string",
+            "description": "Human-readable status name.",
+            "example": "New",
+            "enum": [
+              "New",
+              "Verifying",
+              "Full Coverage",
+              "Declined",
+              "Basic Coverage"
+            ]
+          },
+          "LeadInfo": {
+            "$ref": "#/components/schemas/WebhookCrmProject_LeadInfo"
+          },
+          "Source": {
+            "type": "string",
+            "description": "Source of the lead.",
+            "example": "Website",
+            "enum": [
+              "Website",
+              "Manual",
+              "Voucher"
+            ]
+          },
+          "Offer": {
+            "$ref": "#/components/schemas/WebhookCrmProject_Offer"
+          },
+          "Requests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookCrmProject_Request"
+            }
+          }
+        }
+      },
+      "WebhookCrmProject_LeadInfo": {
+        "type": "object",
+        "properties": {
+          "FirstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "LastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "Service": {
+            "type": "string",
+            "example": "Roofing"
+          },
+          "Address": {
+            "type": "string",
+            "example": "123 Main St."
+          },
+          "City": {
+            "type": "string",
+            "example": "New York"
+          },
+          "State": {
+            "type": "string",
+            "example": "MN",
+            "description": "Code of state"
+          },
+          "ZipCode": {
+            "type": "string",
+            "example": "10001"
+          },
+          "Phone": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email",
+            "example": "test@example.com"
+          },
+          "Description": {
+            "type": "string"
+          }
+        }
+      },
+      "WebhookCrmProject_Offer": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Price": {
+            "type": "integer"
+          }
+        }
+      },
+      "WebhookCrmProject_Request": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Unique identifier for the lead.",
+            "example": 1
+          },
+          "Status": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Status code of the lead.",
+            "example": 1
+          },
+          "StatusName": {
+            "type": "string",
+            "description": "Human-readable status name of the request.",
+            "example": "In Progress"
+          },
+          "IsChosen": {
+            "type": "boolean",
+            "description": "Chosen project request. If it is true, all another are rejected",
+            "example": false
+          },
+          "Created": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp of the request.",
+            "example": "2024-12-23T20:59:44.322Z",
+            "nullable": true
+          },
+          "Contractor": {
+            "$ref": "#/components/schemas/WebhookCrmProjectRequest_Contractor"
+          },
+          "Documents": {
+            "$ref": "#/components/schemas/WebhookCrmProjectRequest_Documents"
+          },
+          "Commission": {
+            "$ref": "#/components/schemas/WebhookCrmProject_Commission"
+          },
+          "CustomerFeedback": {
+            "$ref": "#/components/schemas/WebhookCrmProject_CustomerFeedback"
+          },
+          "RejectReason": {
+            "$ref": "#/components/schemas/WebhookCrmProject_RejectReason"
+          }
+        }
+      },
+      "WebhookCrmProjectRequest_Contractor": {
+        "nullable": true,
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Office": {
+            "$ref": "#/components/schemas/WebhookCrmProjectRequest_Office"
+          }
+        }
+      },
+      "WebhookCrmProjectRequest_Office": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "Address": {
+            "type": "string"
+          },
+          "City": {
+            "type": "string"
+          },
+          "State": {
+            "type": "string"
+          },
+          "Country": {
+            "type": "string"
+          },
+          "ZipCode": {
+            "type": "string"
+          },
+          "Phone": {
+            "type": "string"
+          },
+          "Emails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Primary": {
+            "type": "integer",
+            "format": "uint8"
+          }
+        }
+      },
+      "WebhookCrmProjectRequest_Documents": {
+        "type": "object",
+        "properties": {
+          "Contract": {
+            "type": "string",
+            "nullable": true,
+            "description": "Link or identifier for the contract document. Available for download only to logged in users.",
+            "example": "https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813"
+          },
+          "ContractDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date of contract document.",
+            "example": "2024-12-23T20:59:44.322Z",
+            "nullable": true
+          },
+          "Receipt": {
+            "type": "string",
+            "nullable": true,
+            "description": "Available for download only to logged in users.",
+            "example": "https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813"
+          },
+          "Guarantee": {
+            "type": "string",
+            "nullable": true,
+            "description": "Available for download only to logged in users.",
+            "example": "https://contractors.directorii.com/api/v1/attachment/download/dc860d0d-2f19-4dc2-b62d-5c4624a1c813"
+          }
+        }
+      },
+      "WebhookCrmProject_Commission": {
+        "type": "object",
+        "properties": {
+          "ProjectAmount": {
+            "type": "number",
+            "format": "float64",
+            "nullable": true,
+            "description": "Total amount of the project.",
+            "example": 40.5
+          },
+          "FeePercent": {
+            "type": "number",
+            "format": "float64",
+            "nullable": true,
+            "description": "Percentage fee applied to the project amount.",
+            "example": 5
+          },
+          "Fee": {
+            "type": "number",
+            "format": "float64",
+            "nullable": true,
+            "description": "Total fee charged for the project.",
+            "example": 2.5
+          },
+          "Payment": {
+            "type": "string",
+            "nullable": true,
+            "description": "Payment method used.",
+            "enum": [
+              "Failed",
+              "Succeeded",
+              "Processing",
+              "Canceled",
+              "Unknown"
+            ],
+            "example": "Succeeded"
+          }
+        }
+      },
+      "WebhookCrmProject_CustomerFeedback": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "Date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when feedback was given.",
+            "example": "2024-12-23T20:59:44.322Z"
+          },
+          "Rate": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Rating given by customer (1-5).",
+            "example": 5
+          },
+          "Feedback": {
+            "type": "string",
+            "description": "Customer's feedback comments.",
+            "example": "Test feedback"
+          }
+        }
+      },
+      "WebhookCrmProject_RejectReason": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Unique identifier for reject reason.",
+            "example": 1
+          },
+          "Name": {
+            "type": "string",
+            "description": "Description of reject reason.",
+            "enum": [
+              "Didn’t reach out",
+              "Couldn’t reach contact",
+              "Pricing",
+              "Requested by mistake",
+              "Outside service area",
+              "Went with someone else",
+              "Spam"
+            ],
+            "example": "Didn’t reach out"
+          }
+        }
+      },
+      "WebhookCrmContractorListing_Payload": {
+        "type": "object",
+        "properties": {
+          "Timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The timestamp of the webhook event.",
+            "example": 1730003119
+          },
+          "Action": {
+            "type": "string",
+            "description": "The action that triggered the webhook.",
+            "enum": [
+              "Created",
+              "Updated"
+            ],
+            "example": "Created"
+          },
+          "Data": {
+            "$ref": "#/components/schemas/WebhookCrmContractorListing_Data"
+          }
+        }
+      },
+      "WebhookCrmContractorListing_Data": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "Status": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "StatusName": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookCrmContractorListing_Service"
+            }
+          },
+          "Team": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookCrmContractorListing_TeamMember"
+            }
+          },
+          "Users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookCrmContractorListing_User"
+            }
+          },
+          "Office": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookCrmContractorListing_Office"
+            }
+          },
+          "Links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookCrmContractorListing_Link"
+            }
+          }
+        }
+      },
+      "WebhookCrmContractorListing_Service": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "Name": {
+            "type": "string"
+          }
+        }
+      },
+      "WebhookCrmContractorListing_TeamMember": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Unique identifier for the team member for a revision of a contractor listing. The field is not suitable for identifying changes to an object.",
+            "example": 11
+          },
+          "UniqueId": {
+            "type": "string",
+            "description": "Unique identifier for the team member through different revisions of a contractor listing. It has uuid format.",
+            "example": "08447bb3-6497-4e9e-a531-d6a0cea24d2f"
+          },
+          "FirstName": {
+            "type": "string",
+            "description": "First name of team member.",
+            "example": "Vladimir"
+          },
+          "LastName": {
+            "type": "string",
+            "description": "Last name of team member.",
+            "example": "Carevski"
+          },
+          "Email": {
+            "type": "string",
+            "description": "Email of team member.",
+            "example": "testTeamMember@directorii.com"
+          },
+          "Phone": {
+            "type": "string",
+            "description": "Phone of team member.",
+            "example": "+12673800000"
+          },
+          "Position": {
+            "type": "string",
+            "description": "Position of team member.",
+            "example": "CEO"
+          },
+          "Owner": {
+            "type": "integer",
+            "format": "uint8",
+            "description": "If this team member is owner, this field has value 1, othervize 0.",
+            "example": 1
+          }
+        }
+      },
+      "WebhookCrmContractorListing_User": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Unique identifier for the team member for a revision of a contractor listing. The field is not suitable for identifying changes to an object.",
+            "example": 100
+          },
+          "FirstName": {
+            "type": "string",
+            "description": "First name of team member.",
+            "example": "Sergey"
+          },
+          "LastName": {
+            "type": "string",
+            "description": "Last name of team member.",
+            "example": "Dmitriev"
+          },
+          "Email": {
+            "type": "string",
+            "description": "Email of user.",
+            "example": "testUser@directorii.com"
+          },
+          "Phone": {
+            "type": "string",
+            "description": "Phone of user.",
+            "example": "+12673800000"
+          },
+          "Office": {
+            "$ref": "#/components/schemas/WebhookCrmContractorListing_Office"
+          }
+        }
+      },
+      "WebhookCrmContractorListing_Office": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Unique identifier for the office for a revision of a contractor listing. The field is not suitable for identifying changes to an object.",
+            "example": 35
+          },
+          "UniqueId": {
+            "type": "string",
+            "description": "Unique identifier for the office through different revisions of a contractor listing. It has uuid format.",
+            "example": "dfe1a9cb-ff7d-4bad-aa67-d300a741dcf2"
+          },
+          "GooglePlaceId": {
+            "type": "string",
+            "description": "Gooogle identifier of office place.",
+            "example": "ChIJm4eQyMGseIgR-W0Nn6XssQU"
+          },
+          "Address": {
+            "type": "string",
+            "description": "Address of office.",
+            "example": "116 N Crescent Dr"
+          },
+          "City": {
+            "type": "string",
+            "description": "City of office.",
+            "example": "Blytheville"
+          },
+          "State": {
+            "type": "string",
+            "description": "State of office.",
+            "example": "Arkansas"
+          },
+          "Country": {
+            "type": "string",
+            "description": "Country of office.",
+            "example": "United States"
+          },
+          "Zip": {
+            "type": "string",
+            "description": "Zip code of office.",
+            "example": "72315"
+          },
+          "Phone": {
+            "type": "string",
+            "description": "Phone of office.",
+            "example": "+12673800000"
+          },
+          "Emails": {
+            "type": "array",
+            "description": "Emails of office.",
+            "items": {
+              "type": "string",
+              "example": "officeEmail@directorii.com"
+            }
+          },
+          "Primary": {
+            "type": "integer",
+            "format": "uint8",
+            "description": "If this office is primary, this field has value 1, othervize 0.",
+            "example": 1
+          }
+        }
+      },
+      "WebhookCrmContractorListing_Link": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Unique identifier for the link for a revision of a contractor listing. The field is not suitable for identifying changes to an object.",
+            "example": 40
+          },
+          "UniqueId": {
+            "type": "string",
+            "description": "Unique identifier for the link through different revisions of a contractor listing. It has uuid format.",
+            "example": "dfe1a9cb-ff7d-4bad-aa67-d300a741dcf2"
+          },
+          "Type": {
+            "type": "string",
+            "description": "Type of link",
+            "enum": [
+              "Website",
+              "Facebook",
+              "Google Page"
+            ],
+            "example": "Facebook"
+          },
+          "Url": {
+            "type": "string",
+            "example": "https://www.facebook.com/SGAConstruction"
+          }
+        }
+      }
+    }
+  }
+}
