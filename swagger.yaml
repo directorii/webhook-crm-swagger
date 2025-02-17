@@ -459,7 +459,33 @@
             "type": "string"
           },
           "Name": {
-            "type": "string"
+            "type": "string",
+            "description": "Contractor status.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Published",
+              "Archive",
+              "Frozen",
+              "Past Due",
+              "Unvetted",
+              "Pre-approval",
+              "Pre-approved",
+              "Verification",
+              "Unverified",
+              "Declined",
+              "Google Certified (Draft)",
+              "Google Certified (Published)",
+              "Google Certified (Disabled)",
+              "Google Certified (Archive)",
+              "Google Certified (Pre-approved)",
+              "Google Certified (Verification)",
+              "SEO (Draft)",
+              "SEO (Published)",
+              "SEO (Disabled)",
+              "SEO (Archive)"
+            ],
+            "example": "Draft"
           },
           "Services": {
             "type": "array",
